@@ -1,6 +1,6 @@
 # End-to-End Encrypted Nexmo Android In-App Messaging App Demo
 
-This readme walks you through the steps to bring the E2EE Nexmo In-App Messaging Android app to life. It also attempts to explain the key changes to the original [Nexmo code](https://github.com/Nexmo/messaging-demo-android) on GitHub.
+This readme walks you through the steps to bring the E2EE Nexmo In-App Messaging Android app to life. The sample app is forked off the original [Nexmo code](https://github.com/Nexmo/messaging-demo-android) on GitHub.
 
 ## What is End-to-End Encryption?
 
@@ -9,24 +9,24 @@ First, let’s start with a quick refresher of what E2EE (End-to-End Encryption)
 ![Virgil Chat](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/chat_example.png)
 *Note: image needs to be updated, it's directly referred from Back4App project*
 
-The message remains encrypted while it travels over Wi-Fi and the Internet, through the cloud / web server, into a database, and on the way back to your chat partner. In other words, none of the networks or servers have a clue of what the two of you are chatting about.
+The message remains encrypted while it travels over Wi-Fi and the Internet, through the cloud / web server, into Nexmo's backend, and on the way back to your chat partner. In other words, none of the networks or servers have a clue of what the two of you are chatting about. It's End-to-End Encrypted like WhatsApp and other encrypted messengers.
 
 ![Virgil Chat Server](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/chat_example_server.png)
 *Note: image needs to be updated, it's directly referred from Back4App project*
 
-What’s difficult in End-to-End Encryption is the task of managing the encryption keys in a way that only the users involved in the chat can access them and nobody else. And when I write “nobody else”, I really mean it: even insiders of your cloud provider or even you, the developer, are out; [no accidental mistakes][_mistakes] or legally enforced peeking are possible. Writing crypto, especially for multiple platforms is hard: generating true random numbers, picking the right algorithms, and choosing the right encryption modes are just a few examples that make most developers wave their hands in the air and end up just NOT doing it.
+What’s difficult in End-to-End Encryption is the task of managing the encryption keys in a way that only the users involved in the chat can access them and nobody else. And when I write “nobody else”, I really mean it: even insiders of your cloud provider or even you, the developer, are out; [no accidental mistakes][_mistakes] or legally enforced peeking are possible. Writing crypto, especially to work between multiple platforms is hard: generating true random numbers, picking the right algorithms on each operating systems involved, and choosing the right encryption modes are just a few examples that make most developers wave their hands in the air and end up just NOT doing it.
 
-Virgil's End-to-End Encryption tech enables Nexmo developers to ignore all these annoying details and quickly and simply End-to-End Encrypt their users' In-App chat messages.
+Virgil's End-to-End Encryption SDK enables Nexmo developers to ignore all these details and quickly and simply End-to-End Encrypt their users' In-App chat messages.
 
 **For an intro, this is how we’ll upgrade the Nexmo Android app to be End-to-End Encrypted:**
 1. During sign-up: we’ll generate the individual private & public keys for new users (remember: the recipient's public key encrypts messages and the matching recipient's private key decrypts them).
-1. Before sending messages, we’ll encrypt chat messages with the recipient's ever-changing public keys. Virgil's Perfect Forward Secrecy is the technology behind revolving encryption keys for every message: to make sure that future conversations are not compromised with a key that's accidentally leaked.
-1. After receiving messages, we’ll decrypt chat messages with the recipient's ever-changing private keys.
+1. Before sending messages, we’ll encrypt chat messages with the recipients' public keys.
+1. After receiving messages, we’ll decrypt chat messages with the recipients' private keys.
 
 ![Virgil E2EE](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/virgil_main.png)
 *Note: image needs to be updated, it's directly referred from Back4App project*
 
-We’ll publish the users’ public keys to Virgil’s Cards Service so that chat users are able to look up each other and able to encrypt messages for each other.  The private keys will stay on the user devices.
+We’ll publish the users’ public keys to Virgil’s Cards Service so that chat users are able to look up each other and able to encrypt messages for each other. The private keys will stay on the user devices.
 
 **OK, enough talking: let’s start doing!**
 
@@ -39,34 +39,34 @@ We’ll publish the users’ public keys to Virgil’s Cards Service so that cha
 
 * Java 7+
 * [Android Studio](https://developer.android.com/studio/index.html)
-* [Application API server](https://github.com/VirgilSecurity/demo-nexmo-server)
+* [Application API server](https://github.com/VirgilSecurity/demo-nexmo-server) as an extension of your backend (we use the backend to generate JWT tokens so that only your authenticated users can access the Virgil services).
 
-## Sign up for Nexmo & Virgil accounts
+## Step 1: Install Application API server
 
-- Sign up for your Nexmo account
-- Any other steps here?
-- Sign up for a [Virgil Security account][_virgil_account]
-- Create a new app & token
+Follow the instructions in the [Application API server](https://github.com/VirgilSecurity/demo-nexmo-server) repo to set up a simple Node.js web backend that authenticates users and gives out JWT tokens for the Nexmo and Virgil APIs.
 
-## Install Application API server
+By the end of the Application server installation, you'll have created Nexmo & Virgil accounts and have the appropriate API keys/secrets.
 
-Application API server is already installed and available by the [link](https://auth-nexmo.virgilsecurity.com/)
-
-## Import Project in Android Studio:
+## Step 2: Import Project in Android Studio:
   - File -> New -> Project from Version Control -> Git
   - Git Repository URL: https://github.com/VirgilSecurity/demo-nexmo-android
   - Check out the “master” branch
 
-### Configure mobile application
+### Step 3: Configure and Start the Android app
 
-Open VirgilFacade class and define constants from the table below
+Open VirgilFacade class and define constants from the table below. If you already completed Step 1, you have these values from your Virgild dashboard.
 
 | Constant name | Description |
 | --- | --- |
-| VIRGIL_ACCESS_TOKEN | Your's Virgil Application access token. You should generate this token on the [dashboard](https://developer.virgilsecurity.com/account/dashboard/) or use the existing one |
-| VIRGIL_APP_PUBLIC_KEY | Your's Virgil Application public key as Base64-encoded string |
+| VIRGIL_ACCESS_TOKEN | Copy & paste the API Key ID from the list of API keys on your [Virgil account dashboard](https://developer.virgilsecurity.com/account/dashboard/). You must have have already generated this key while setting up your sample Application API server in Step 1. |
+| VIRGIL_APP_PUBLIC_KEY | Copy over the "CARD SERVICE PUBLIC KEY" value from your Virgil app from your [Virgil account dashboard](https://developer.virgilsecurity.com/account/dashboard/). You must have have already created an app while setting up your sample Application API server in Step 1. |
 | VIRGIL_AUTH_PUBLIC_KEY | Virgil Authentication server public key as Base64-encoded string |
 | AUTH_SERVER_URL | Application API server URL |
+
+Give it a run in Android studio and play with the app in the emulator.
+
+[If any questions, join our Slack channel](https://join.slack.com/t/virgilsecurity/shared_invite/enQtMjg4MDE4ODM3ODA4LTc2OWQwOTQ3YjNhNTQ0ZjJiZDc2NjkzYjYxNTI0YzhmNTY2ZDliMGJjYWQ5YmZiOGU5ZWEzNmJiMWZhYWVmYTM) where we're happy to help you real-time.
+
 
 # Code overview
 
