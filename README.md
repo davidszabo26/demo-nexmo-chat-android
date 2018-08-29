@@ -7,12 +7,10 @@ This readme walks you through the steps to bring the E2EE Nexmo In-App Messaging
 First, let’s start with a quick refresher of what E2EE (End-to-End Encryption) is and how it works. E2EE is simple: when you type in a chat message, it gets encrypted on your mobile device (or in your browser) and gets decrypted only when your chat partner receives it and wants to display it in chat window.
 
 ![Virgil Chat](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/chat_example.png)
-*Note: image needs to be updated, it's directly referred from Back4App project*
 
 The message remains encrypted while it travels over Wi-Fi and the Internet, through the cloud / web server, into a database, and on the way back to your chat partner. In other words, none of the networks or servers have a clue of what the two of you are chatting about.
 
 ![Virgil Chat Server](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/chat_example_server.png)
-*Note: image needs to be updated, it's directly referred from Back4App project*
 
 What’s difficult in End-to-End Encryption is the task of managing the encryption keys in a way that only the users involved in the chat can access them and nobody else. And when I write “nobody else”, I really mean it: even insiders of your cloud provider or even you, the developer, are out; [no accidental mistakes][_mistakes] or legally enforced peeking are possible. Writing crypto, especially for multiple platforms is hard: generating true random numbers, picking the right algorithms, and choosing the right encryption modes are just a few examples that make most developers wave their hands in the air and end up just NOT doing it.
 
@@ -22,9 +20,6 @@ Virgil's End-to-End Encryption tech enables Nexmo developers to ignore all these
 1. During sign-up: we’ll generate the individual private & public keys for new users (remember: the recipient's public key encrypts messages and the matching recipient's private key decrypts them).
 1. Before sending messages, we’ll encrypt chat messages with the recipient's ever-changing public keys. Virgil's Perfect Forward Secrecy is the technology behind revolving encryption keys for every message: to make sure that future conversations are not compromised with a key that's accidentally leaked.
 1. After receiving messages, we’ll decrypt chat messages with the recipient's ever-changing private keys.
-
-![Virgil E2EE](https://github.com/VirgilSecurity/chat-back4app-android/blob/master/img/virgil_main.png)
-*Note: image needs to be updated, it's directly referred from Back4App project*
 
 We’ll publish the users’ public keys to Virgil’s Cards Service so that chat users are able to look up each other and able to encrypt messages for each other.  The private keys will stay on the user devices.
 
@@ -39,18 +34,10 @@ We’ll publish the users’ public keys to Virgil’s Cards Service so that cha
 
 * Java 7+
 * [Android Studio](https://developer.android.com/studio/index.html)
-* [Application API server](https://github.com/VirgilSecurity/demo-nexmo-server)
 
-## Sign up for Nexmo & Virgil accounts
+## Install sample Node backend
 
-- Sign up for your Nexmo account
-- Any other steps here?
-- Sign up for a [Virgil Security account][_virgil_account]
-- Create a new app & token
-
-## Install Application API server
-
-Application API server is already installed and available by the [link](https://auth-nexmo.virgilsecurity.com/)
+You'll need a backend server that generates JWT tokens for your app users to access Virgil's APIs. [Follow the instructions](https://github.com/VirgilSecurity/demo-nexmo-server) to set up a Node app that does that for you.
 
 ## Import Project in Android Studio:
   - File -> New -> Project from Version Control -> Git
